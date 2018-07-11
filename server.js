@@ -1,28 +1,25 @@
-// server.js
-var cors = require('cors');
-
-const express        = require('express');
-const MongoClient    = require('mongodb').MongoClient;
-const bodyParser     = require('body-parser');
 const db             = require('./app/config/db');
+const express        = require('express'); //express listens for connections and manages routing 
 const app            = express();
-const port = 8000;
+var cors = require('cors');
+const bodyParser     = require('body-parser')
+const mongoose = require('mongoose');
+var passport = require('passport'); 
+var authController = require('./app/controllers/auth'); 
 
+//Configure Express 
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize()); 
 
+//Set up routes 
+var persons = require('./app/routes/person')
+var users = require('./app/routes/user'); 
+app.use('/', persons)
+app.use('/', users); 
 
+//Configure Mongoose and Connect to Database 
+mongoose.connect(db.url, {useNewUrlParser: true});
 
-MongoClient.connect(db.url, (err, database) => {
-  if (err) return console.log(err); 
-                      
-  // Make sure you add the database name and not the collection name
-  const actual_db = database.db("expense-manager-pat"); 
-  // require('./app/routes/note_routes')(app, actual_db); 
-  require('./app/routes/index')(app, actual_db); 
-
-  app.listen(port, () => {
-    console.log('We are live on ' + port);
-  });               
-})
+app.listen(8000); 
