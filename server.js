@@ -22,4 +22,11 @@ app.use('/', users);
 //Configure Mongoose and Connect to Database 
 mongoose.connect(db.url, {useNewUrlParser: true});
 
-app.listen(8000); 
+//Before deployment 
+// app.listen(8000); 
+
+//After deployement 
+app.listen(process.env.PORT || 8080, function() {
+    console.log('Express server is up and running!');
+  });
+  
