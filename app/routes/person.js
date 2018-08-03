@@ -5,8 +5,9 @@ var Person = require('../models/Person');
 
 //POST route for updating data
 
-//CRUD 
-//Create
+/**
+ * Add a person to the database 
+ */
 router.post('/addPerson', function(req, res)  {
   // Note in Postman make sure to use x-www-form-urlencoded not form-data
   console.log("/addPerson"); 
@@ -29,7 +30,9 @@ router.post('/addPerson', function(req, res)  {
   }); 
 });  
 
-//Read
+/**
+ * Get all the persons 
+ */
 router.get('/getAllPersons', function(req, res) {  
   console.log("/getAllPersons"); 
   Person.find(function (err, persons) {
@@ -39,7 +42,9 @@ router.get('/getAllPersons', function(req, res) {
   }); 
 }); 
 
-//Delete
+/**
+ * Remove a person from the database by id 
+ */
 router.delete('/removePerson/:id', function(req, res) {
   const m_id = req.params.id;
   console.log("removePerson"); 
