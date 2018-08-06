@@ -1,11 +1,11 @@
 const db             = require('./app/config/db');
 const express        = require('express'); //express listens for connections and manages routing 
 const app            = express();
-var cors = require('cors');
+const cors = require('cors');
 const bodyParser     = require('body-parser')
 const mongoose = require('mongoose');
-var passport = require('passport'); 
-var authController = require('./app/controllers/auth'); 
+const passport = require('passport'); 
+const authController = require('./app/controllers/auth'); 
 
 //Configure Express 
 app.use(cors())
@@ -13,19 +13,16 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize()); 
 
-//Set up routes 
-var persons = require('./app/routes/person')
-var users = require('./app/routes/user'); 
-app.use('/', persons)
-app.use('/', users); 
+require('./app/routes/person')(app); 
+require('./app/routes/user')(app); 
 
 //Configure Mongoose and Connect to Database 
 mongoose.connect(db.url, {useNewUrlParser: true});
 
-//Before deployment 
-// app.listen(8000); 
+console.log('is mongoose connected? 0 - disconnected 1 - connected 2 - connecting 3 - disconnected'); 
+console.log(mongoose.connection.readyState);
 
-//After deployement 
+//Start the server 
 app.listen(process.env.PORT || 8080, function() {
     console.log('Express server is up and running!');
   });
