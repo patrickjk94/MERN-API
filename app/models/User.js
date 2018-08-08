@@ -10,6 +10,10 @@ var UserSchema = new mongoose.Schema({
     unique: true,
     required: false
   },
+  email: {
+    type: String,
+    required: false
+  }, 
   password: 
   {
     type: String,

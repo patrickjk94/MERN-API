@@ -10,15 +10,16 @@ module.exports = function(app) {
     /**
      *  Add a new user to the databse 
      */
-    app.post('/register', (req, res, next) => {
-        console.log('/register'); 
+    app.post('/registerUser', (req, res, next) => {
+        console.log('/registerUser'); 
 
         //1. create a new user object  
         var user = new User({
             username: req.body.username,
-            email : req.body.email, 
-            password: req.body.password
+            password: req.body.password, 
+            email : req.body.email
         });
+        console.log('user: ' + user.username + ' email: ' + user.email + ' password: ' + user.password); 
         
         //2. make sure there is not a pre-existing user or password 
         let valid_user = true; 
@@ -34,6 +35,19 @@ module.exports = function(app) {
         } else {
             res.json({ status: 0, message: 'Not a valid User!'}); 
         }
+    })
+
+    app.post('/loginUser', (req, res, next) => {
+        console.log('/loginUser'); 
+
+        //1. create a new user object  
+        var user = new User({
+            username: req.body.username,
+            password: req.body.password, 
+            email : req.body.email
+        });
+        console.log('user: ' + user.username + ' email: ' + user.email + ' password: ' + user.password); 
+        
     })
 
     /**
