@@ -15,6 +15,8 @@ app.use(passport.initialize());
 
 require('./app/routes/person')(app); 
 require('./app/routes/user')(app); 
+require('./app/routes/todo')(app); 
+
 
 //Configure Mongoose and Connect to Database 
 mongoose.connect(db.url, {useNewUrlParser: true});

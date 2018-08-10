@@ -1,64 +1,75 @@
 /** Routes for my todolist */
 var express = require('express');
 var router = express.Router();
+const jwt = require('jsonwebtoken'); 
+const { verifyToken } = require('../util.js'); 
 
-var Person = require('../models/Person');
-
-//POST route for updating data
+var Todo = require('../models/Todo');
 
 module.exports = function(app) {
+
   /**
-   * Add a person to the database 
+   * Add a todo item to the database 
    */
-  app.post('/addPerson', function(req, res)  {
+  app.post('/addTodo', verifyToken, function(req, res)  {
     // Note in Postman make sure to use x-www-form-urlencoded not form-data
-    console.log("/addPerson"); 
+    console.log("/addTodo");
 
-    console.log(req.body); 
-    //create a new Person 
-    var person = new Person(req.body); 
-    console.log("made person: " + person); 
-
-    //save all person
-    person.save(function(error) {
-      console.log("saved!"); 
-      if(error) {
+    //1. grab the user id 
+    user_id = req.app.locals.user_id; 
+ 
+    //2. create a new Todo item 
+    m_todo = { user_id: user_id, text: "text", completed: false }; 
+    var todo = new Todo(m_todo); 
+    console.log("made todo: " + todo); 
+        
+    //3. save the todo item 
+    todo.save(function(error) 
+    {
+      if(error)
+      {
         console.log("error!"); 
-      } else {
-        res.send(person);
       }
-    }); 
+      else
+      {
+        console.log("saved!"); 
+        res.send( {success: true} ); 
+      }
+    });
   });  
 
   /**
-   * Get all the persons 
+   * Get all the todos 
    */
-  app.get('/getAllPersons', function(req, res) {  
-    console.log("/getAllPersons"); 
-    Person.find(function (err, persons) {
-      if (err) return console.error(err);
-      console.log(persons);
-      res.send(persons); 
+  app.get('/getAllTodos', verifyToken, function(req, res)
+  {  
+    console.log("/getAllTodos"); 
+    Todo.find(function (err, todos)
+    {
+      if (err) 
+        return console.error(err);
+      else 
+        res.send(todos); 
     }); 
   }); 
 
   /**
-   * Remove a person from the database by id 
+   * Remove a todo from the database by id 
    */
-  app.delete('/removePerson/:id', function(req, res) {
+  app.delete('/removeTodo/:id', verifyToken, function(req, res) {
     const m_id = req.params.id;
-    console.log("removePerson"); 
+    console.log("removeTodo"); 
 
-    Person.findOneAndRemove({ _id: m_id }) 
+    Todo.findOneAndRemove({ _id: m_id }) 
     .exec(function(err, item) {
         if (err) {
             return res.json({success: false, msg: 'Cannot remove item'});
         }       
         if (!item) {
-            return res.status(404).json({success: false, msg: 'Person not found'});
+            return res.status(404).json({success: false, msg: 'Todo not found'});
         }  
-        res.json({success: true, msg: 'Person deleted.'});
+        res.json({success: true, msg: 'Todo deleted.'});
     });
+
   });
 }
-// module.exports = router;

@@ -1,12 +1,23 @@
 var User = require('../models/User');
 var express = require('express');
 var router = express.Router();
+
+const jwt = require('jsonwebtoken'); 
+const { verifyToken } = require('../util.js'); 
+
 var authController = require('../controllers/auth');
 
 var bcrypt = require('bcrypt-nodejs');
 
 
 module.exports = function(app) {
+
+    app.post('/testPost', verifyToken, (req,res,next)=>{
+        console.log('testPost!'); 
+        console.log(req.app.locals.user_id); 
+        res.send({message: "hello!"}); 
+    }); 
+
     /**
      *  Add a new user to the databse 
      */
@@ -30,7 +41,7 @@ module.exports = function(app) {
                 console.log("saving!"); 
                 if (err)
                     res.send(err);
-                res.json({ status: 1, message: 'Added a new User!' });
+                // res.json({ status: 1, message: 'Added a new User!' });
             });
         } else {
             res.json({ status: 0, message: 'Not a valid User!'}); 
@@ -47,7 +58,13 @@ module.exports = function(app) {
             email : req.body.email
         });
         console.log('user: ' + user.username + ' email: ' + user.email + ' password: ' + user.password); 
-        
+
+        //2. create a json web token
+        jwt.sign({user}, 'secretkey', {expiresIn: '5m'}, (err, token) => {
+            res.json({
+                token: token
+            }); 
+        });     
     })
 
     /**
@@ -62,5 +79,5 @@ module.exports = function(app) {
             res.json(users);
         });        
     });
+
 }
-// module.exports = router;
